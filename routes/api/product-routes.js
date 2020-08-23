@@ -7,23 +7,17 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // be sure to include its associated Category and Tag data
 router.get('/', (req, res) => {
   Product.findAll({
-    attributes: [
-      'id',
-      'product_name',
-      'price',
-      'stock'
-    ],
     include: [
       {
-        model: Category,
-        attributes: [
-          'id',
-          'category_name'
-        ]
+        model: Category
+      },
+      {
+        model: Tag,
+        through: ProductTag
       }
     ]
   })
-    .then(dbProductData => res.json(dbProductData))
+    .then(product => res.json(product))
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
@@ -38,34 +32,27 @@ router.get('/:id', (req, res) => {
     where: {
       id: req.params.id
     },
-    attributes: [
-      'id',
-      'product_name',
-      'price',
-      'stock'
-    ],
     include: [
       {
-        model: Category,
-        attributes: [
-          'id',
-          'category_name'
-        ]
+        model: Category
+      },
+      {
+        model: Tag,
+        through: ProductTag
       }
     ]
   })
-    .then(dbProductData => {
-      if (!dbProductData) {
-        res.status(404).json({ message: 'No produst found with this id!' });
+    .then(product => {
+      if (!product) {
+        res.status(404).json({ message: 'No product found with this id!' });
         return;
       }
-      res.json(dbProductData);
+      res.json(product);
     })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
-
 });
 
 // create new product
@@ -78,7 +65,6 @@ router.post('/', (req, res) => {
       tagIds: [1, 2, 3, 4]
     }
   */
-
   Product.create({
     product_name: req.body.product_name,
     price: req.body.price,
@@ -114,7 +100,7 @@ router.put('/:id', (req, res) => {
       id: req.params.id,
     },
   })
-    .then((dbProductData) => {
+    .then((product) => {
       // find all associated tags from ProductTag
       return ProductTag.findAll({ where: { product_id: req.params.id } });
     })
@@ -155,11 +141,11 @@ router.delete('/:id', (req, res) => {
       id: req.params.id
     }
   })
-    .then(dbProductData => {
-      if (!dbProductData) {
+    .then(product => {
+      if (!product) {
         res.status(404).json({ message: 'No product found with this id!' });
         return;
-      } res.json(dbProductData);
+      } res.json(product);
     })
     .catch(err => {
       console.log(err);
