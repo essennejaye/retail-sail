@@ -13,4 +13,4 @@
 * THEN I am able to successfully create, update, and delete data in my database
 
 ### Screencastify
-![]https://drive.google.com/file/d/1xk4IUedtCXsazkVXADE9innOezeCb5XW/view
+![]https://drive.google.com/file/d/1thaklCD2D-6NU6zfBbEK3XL2T0-Hmd20/view?usp=sharing
